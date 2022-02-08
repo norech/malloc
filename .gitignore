@@ -1,0 +1,3 @@
+/libmy_malloc.so
+*.o
+*.gc*
