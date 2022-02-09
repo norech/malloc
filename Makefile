@@ -17,7 +17,8 @@ LFLAGS = \
 
 LFLAGS_TEST = $(LFLAGS) -lcriterion
 
-SRC =	src/malloc.c \
+SRC =	src/allocate_memory.c \
+		src/malloc.c \
 		src/free.c \
 		src/calloc.c \
 		src/realloc.c \

@@ -6,9 +6,9 @@
 */
 
 #include <string.h>
-#include <unistd.h>
+#include "allocate_memory.h"
 
 void *malloc(size_t size)
 {
-    return (sbrk(size));
+    return (grow_allocated_memory(size));
 }
