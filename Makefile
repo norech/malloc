@@ -9,7 +9,7 @@ CC = gcc
 
 AR = ar rc
 
-CFLAGS = -W -Wall -Werror -I./include -g3
+CFLAGS = -fPIC -W -Wall -Werror -I./include -g3
 
 CFLAGS_TEST = $(CFLAGS) -Wno-stringop-truncation -Wno-error=format --coverage
 
@@ -17,7 +17,14 @@ LFLAGS = \
 
 LFLAGS_TEST = $(LFLAGS) -lcriterion
 
-SRC =	src/allocate_memory.c \
+ifeq ($(DEBUG), 1)
+	CFLAGS += -DDEBUG
+endif
+
+SRC =	src/alignment.c \
+		src/alloc_free.c \
+		src/alloc_list.c \
+		src/allocate_memory.c \
 		src/malloc.c \
 		src/free.c \
 		src/calloc.c \
@@ -35,7 +42,7 @@ TARGET_TEST = unit_tests
 all: build_all
 
 build_all: $(OBJ)
-	gcc $(OBJ) -shared -o $(TARGET)
+	gcc -shared -fPIC -o $(TARGET) $(OBJ)
 
 tests_run: clean_tests
 	$(CC) $(CFLAGS) $(CFLAGS_TEST) -o $(TARGET_TEST) $(SRC) $(TEST_FILES) \

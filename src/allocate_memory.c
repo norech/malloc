@@ -16,6 +16,7 @@ static void *pages_origin = NULL;
 
 void *grow_allocated_memory(size_t size)
 {
+    PRINTF("GROW to size %ld\n", size);
     if (page_end == NULL || last_ptr_pos + last_ptr_size + size > page_end) {
         page_start = sbrk(PAGE_SIZE);
         page_end = sbrk(0);
