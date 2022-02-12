@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <unistd.h>
 
-#define PAGE_SIZE (getpagesize() * 2)
+#define PAGE_SIZE ((size_t)getpagesize() * 2)
 
 // requests a chunk of specified size at the end of the virtual heap
 // if not enough memory is in the heap, allocates 2 new pages

@@ -14,10 +14,25 @@ static void *page_start = NULL;
 static void *page_end = NULL;
 static void *pages_origin = NULL;
 
+void *grow_allocated_memory_large(size_t size)
+{
+    void *page_start_large = grow_allocated_memory(PAGE_SIZE);
+
+    size -= PAGE_SIZE;
+    while (size > PAGE_SIZE) {
+        grow_allocated_memory(PAGE_SIZE);
+        size -= PAGE_SIZE;
+    }
+    grow_allocated_memory(size);
+    return (page_start_large);
+}
+
 void *grow_allocated_memory(size_t size)
 {
     PRINTF("GROW to size %ld\n", size);
     if (page_end == NULL || last_ptr_pos + last_ptr_size + size > page_end) {
+        if (size > PAGE_SIZE)
+            return (grow_allocated_memory_large(size));
         page_start = sbrk(PAGE_SIZE);
         page_end = sbrk(0);
         if (page_start == NULL || page_end == NULL)
