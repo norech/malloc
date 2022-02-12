@@ -15,5 +15,5 @@ size_t nearest_pow_of_2(size_t size)
 
 size_t get_aligned_size(size_t size)
 {
-    return nearest_pow_of_2(size + sizeof(alloc_list_t)) - sizeof(alloc_list_t);
+    return nearest_pow_of_2(size);
 }
