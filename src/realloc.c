@@ -21,6 +21,8 @@ void *realloc(void *ptr, size_t size)
     if (list->size > size)
         return (ptr);
     new_ptr = malloc(size);
+    if (new_ptr == NULL)
+        return (ptr);
     memcpy(new_ptr, ptr, size);
     list->is_free = true;
     return (new_ptr);
