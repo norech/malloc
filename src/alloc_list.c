@@ -13,8 +13,9 @@
 
 alloc_list_t *insert_alloc_node(alloc_list_t **list, size_t size, void *start)
 {
+    alloc_list_t *node;
     PRINTF("INSERT NEW NODE of size %ld at %p\n", size, start);
-    alloc_list_t *node = (start == NULL)
+    node = (start == NULL)
         ? grow_allocated_memory(HEADER_SIZE + get_aligned_size(size))
         : start;
     if (node == NULL)
