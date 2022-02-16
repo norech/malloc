@@ -14,16 +14,18 @@
 alloc_list_t *insert_alloc_node(alloc_list_t **list, size_t size, void *start)
 {
     alloc_list_t *node;
+    size_t allocated_size = get_aligned_size(size + sizeof(alloc_list_t));
     PRINTF("INSERT NEW NODE of size %ld at %p\n", size, start);
     node = (start == NULL)
-        ? grow_allocated_memory(HEADER_SIZE + get_aligned_size(size))
+        ? grow_allocated_memory(allocated_size)
         : start;
     if (node == NULL)
         return (NULL);
     node->next = *list;
     node->prev = NULL;
-    node->size = get_aligned_size(size);
-    node->start = (byte_t *)node + HEADER_SIZE;
+    node->size = allocated_size - sizeof(alloc_list_t);
+    PRINTF("SIZE = %ld\n", node->size);
+    node->start = (byte_t *)node + sizeof(alloc_list_t);
     if (*list != NULL)
         (*list)->prev = node;
     *list = node;
