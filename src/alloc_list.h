@@ -29,5 +29,3 @@ alloc_list_t *find_alloc_node(alloc_list_t *list, void *addr, bool ignore_free);
 alloc_list_t *grab_existing_memory_chunk(alloc_list_t *list, size_t size);
 
 void free_alloc_node(alloc_list_t *node);
-
-extern alloc_list_t *alloc_list;

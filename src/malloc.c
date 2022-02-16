@@ -13,10 +13,11 @@
 
 void *malloc(size_t size)
 {
+    allocator_t *alloc = get_allocator();
     PRINTF("MALLOC of size %ld\n", size);
-    alloc_list_t *node = grab_existing_memory_chunk(alloc_list, size);
+    alloc_list_t *node = grab_existing_memory_chunk(alloc->list, size);
     if (node == NULL) {
-        node = insert_alloc_node(&alloc_list, size, NULL);
+        node = insert_alloc_node(&alloc->list, size, NULL);
     }
     PRINTF("MALLOC NODE %p => %p of size %ld\n", node, node->start, node->size);
     return (node->start);

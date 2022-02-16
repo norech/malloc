@@ -9,6 +9,16 @@
 
 #include <stddef.h>
 #include <unistd.h>
+#include "alloc_list.h"
+
+typedef struct allocator_s {
+    void *last_ptr_pos;
+    size_t last_ptr_size;
+    void *page_start;
+    void *page_end;
+    void *pages_origin;
+    alloc_list_t *list;
+} allocator_t;
 
 #define PAGE_SIZE ((size_t)getpagesize() * 2)
 
@@ -23,8 +33,4 @@ void *grow_allocated_memory(size_t size);
 // if a page size ends up empty, it is deallocated
 void shrink_allocated_memory(size_t size);
 
-// get the pointer to the start of the virtual heap
-void *get_allocated_start(void);
-
-// get the pointer to the end of the virtual heap
-void *get_allocated_end(void);
+allocator_t *get_allocator(void);

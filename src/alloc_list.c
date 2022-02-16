@@ -11,8 +11,6 @@
 #include "alignment.h"
 #include "allocate_memory.h"
 
-alloc_list_t *alloc_list = NULL;
-
 alloc_list_t *insert_alloc_node(alloc_list_t **list, size_t size, void *start)
 {
     PRINTF("INSERT NEW NODE of size %ld at %p\n", size, start);

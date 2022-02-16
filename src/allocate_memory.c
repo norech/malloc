@@ -8,11 +8,19 @@
 #include "allocate_memory.h"
 #include "debug.h"
 
-static void *last_ptr_pos = NULL;
-static size_t last_ptr_size = 0;
-static void *page_start = NULL;
-static void *page_end = NULL;
-static void *pages_origin = NULL;
+allocator_t *get_allocator(void)
+{
+    static allocator_t alloc = {
+        .last_ptr_pos = (void *)-1,
+        .last_ptr_size = 0,
+        .page_start = (void *)-1,
+        .page_end = (void *)-1,
+        .pages_origin = (void *)-1,
+        .list = NULL
+    };
+
+    return &alloc;
+}
 
 void *grow_allocated_memory_large(size_t size)
 {
@@ -29,46 +37,40 @@ void *grow_allocated_memory_large(size_t size)
 
 void *grow_allocated_memory(size_t size)
 {
+    allocator_t *alloc = get_allocator();
     PRINTF("GROW to size %ld\n", size);
-    if (page_end == NULL || last_ptr_pos + last_ptr_size + size > page_end) {
+    if (alloc->page_end == (void *)-1
+        || alloc->last_ptr_pos + alloc->last_ptr_size + size
+        > alloc->page_end) {
         if (size > PAGE_SIZE)
             return (grow_allocated_memory_large(size));
-        page_start = sbrk(PAGE_SIZE);
-        page_end = sbrk(0);
-        if (page_start == NULL || page_end == NULL)
+        alloc->page_start = sbrk(PAGE_SIZE);
+        alloc->page_end = sbrk(0);
+        if (alloc->page_start == (void *)-1 || alloc->page_end == (void *)-1)
             return (NULL);
-        if (pages_origin == NULL)
-            pages_origin = page_start;
-        last_ptr_pos = page_start;
-        last_ptr_size = size;
-        return (last_ptr_pos);
+        if (alloc->pages_origin == (void *)-1)
+            alloc->pages_origin = alloc->page_start;
+        alloc->last_ptr_pos = alloc->page_start;
+        alloc->last_ptr_size = size;
+        return (alloc->last_ptr_pos);
     }
-    last_ptr_pos += last_ptr_size;
-    last_ptr_size = size;
-    return (last_ptr_pos);
+    alloc->last_ptr_pos += alloc->last_ptr_size;
+    alloc->last_ptr_size = size;
+    return (alloc->last_ptr_pos);
 }
 
 void shrink_allocated_memory(size_t size)
 {
-    if (page_start == NULL)
+    allocator_t *alloc = get_allocator();
+    if (alloc->page_start == (void *)-1)
         return;
-    if (last_ptr_pos - size < page_start) {
-        page_end = sbrk(0);
-        page_start = sbrk(-PAGE_SIZE);
+    if (alloc->last_ptr_pos - size < alloc->page_start) {
+        alloc->page_end = sbrk(0);
+        alloc->page_start = sbrk(-PAGE_SIZE);
     }
-    size -= last_ptr_size;
-    last_ptr_size = 0;
-    last_ptr_pos -= size;
-    if (last_ptr_pos < pages_origin)
-        last_ptr_pos = pages_origin;
-}
-
-void *get_allocated_start(void)
-{
-    return (pages_origin);
-}
-
-void *get_allocated_end(void)
-{
-    return (last_ptr_pos + last_ptr_size);
+    size -= alloc->last_ptr_size;
+    alloc->last_ptr_size = 0;
+    alloc->last_ptr_pos -= size;
+    if (alloc->last_ptr_pos < alloc->pages_origin)
+        alloc->last_ptr_pos = alloc->pages_origin;
 }
