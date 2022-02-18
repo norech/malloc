@@ -14,7 +14,8 @@
 void *realloc(void *ptr, size_t size)
 {
     byte_t *new_ptr;
-    alloc_list_t *block = (alloc_list_t *)((byte_t *)ptr - HEADER_SIZE);
+    alloc_list_t *block = (alloc_list_t *)((byte_t *)ptr
+        - sizeof(alloc_list_t));
 
     if (ptr == NULL)
         return (malloc(size));
