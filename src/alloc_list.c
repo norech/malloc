@@ -54,8 +54,8 @@ void split_memory_chunk(alloc_list_t *node, size_t required_size)
     new_node = (alloc_list_t *)((byte_t *)node->start + required_size);
     new_node->next = node->next;
     new_node->prev = node;
-    new_node->size = node->size - required_size - HEADER_SIZE;
-    new_node->start = new_node + HEADER_SIZE;
+    new_node->size = node->size - required_size - sizeof(alloc_list_t);
+    new_node->start = new_node + sizeof(alloc_list_t);
     new_node->is_free = true;
     if (node->next != NULL)
         node->next->prev = new_node;
